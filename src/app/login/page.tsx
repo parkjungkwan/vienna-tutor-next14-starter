@@ -33,61 +33,30 @@ export default function LoginPage() {
 				throw new Error('Please enter your credentials.');
 
 			const payload: I_ApiUserLoginRequest = {
-				username: loginRef.current?.value,
+				email: loginRef.current?.value,
 				password: passwordRef.current?.value,
 			};
+			console.log(`MY-INFO: Payload is ${JSON.stringify(payload)}`)
 
-			// console.log(`1 - 페이로드 정보 : ${JSON.stringify(payload)}`)
-
-			// const response = await fetch('/api/hello', {
-			// 	method: 'GET',
-			// 	headers: {
-			// 		'Content-Type': 'application/json',
-			// 	}
-			// });
-
-			// -------------------------------------------------------------
-
-			// const response = await fetch('/api/login', {
-			// 	method: 'POST',
-			// 	headers: {
-			// 		'Content-Type': 'application/json',
-			// 	},
-			// 	body: JSON.stringify(payload),
-			// });
-
-			// -------------------------------------------------------------
-
-			const response = await fetch('http://localhost:8080/api/users/login', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-				'API-Key': process.env.DATA_API_KEY!,
-			},
-			body: JSON.stringify({ time: new Date().toISOString() }),
-			})
-		
-			const data2 = await response.json()
-
-			console.log(`3 - 자바를 다녀 온 정보 :${JSON.stringify(data2)} `)
-
-
-
-			const data: I_ApiUserLoginResponse = await response.json();
-			console.log(`4 - login/route 에서 온 정보 :${JSON.stringify(data)} `)
-			// -------------------------------------------------------------
-
-			if (data.success) {
-				setLoginIsComplete(true);
-				if (redirect) {
-					window.location.replace(redirect);
-				} else {
-					window.location.replace('/dashboard');
+			console.log(`1 - App Routing GET`)
+			const response1 = await fetch('/api/hello', {
+				method: 'GET',
+				headers: {
+					'Content-Type': 'application/json',
 				}
-				return;
-			}
+			});
+			// -------------------------------------------------------------
+			console.log(`2 - App Routing POST`)
+			const response2 = await fetch('/api/login', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify(payload),
+			});
+			
 
-			throw new Error(data.message);
+
 		} catch (error) {
 			let mess = 'Something went wrong.';
 			if (error instanceof Error) {

@@ -3,7 +3,7 @@ import { UserData, UserDataPublic } from '@/types/UserData.type';
 import { NextRequest, NextResponse } from "next/server"
 
 export interface I_ApiUserLoginRequest {
-	username: string;
+	email: string;
 	password: string;
 }
 
@@ -16,25 +16,62 @@ export interface I_ApiUserLoginResponse {
 export const dynamic = 'force-dynamic';
 
 
-export async function POST() {
-	console.log(`2 - POST 정보 : 진입 성공 `)
-	// const res = await fetch('http://localhost:8080/api/users/login', {
-	//   method: 'POST',
-	//   headers: {
-	// 	'Content-Type': 'application/json',
-	// 	'API-Key': process.env.DATA_API_KEY!,
-	//   },
-	//   body: JSON.stringify({ time: new Date().toISOString() }),
-	// })
-   
-	// const data = await res.json()
+export async function POST(request: NextRequest) {
+	console.log(`3 - POST 정보 : 진입 성공 `)
+	const body = (await request.json()) as I_ApiUserLoginRequest;
 
-	// console.log(`3 - 자바를 다녀 온 정보 :${JSON.stringify(data)} `)
+	// trim all values
+	const { email, password } = Object.fromEntries(
+		Object.entries(body).map(([key, value]) => [key, value.trim()]),
+	) as I_ApiUserLoginRequest;
 
-	const greeting = "Login Next 14 !!"
-    const json = {
-        greeting
-    }
+	if (!email || !password) {
+		const res: I_ApiUserLoginResponse = {
+			success: false,
+			message: 'Either login or password is missing',
+		};
+
+		return NextResponse.json(res, { status: 400 });
+	}
+
+	return await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/users/login`, {
+	  method: 'POST',
+	  headers: {
+		'Content-Type': 'application/json',
+	  },
+	  body: JSON.stringify({ email, password }),
+	})
+	.then(async (res)=>{
+		return res.ok ?
+		res.json().then((json)=>{
+			const response = NextResponse.json({ success: true, message: "SUCCESS" }, { status: 200 })
+			response.cookies.set({
+				name: 'userData',
+				value: JSON.stringify(json.data),
+				path: '/',
+				expires: new Date(Date.now() + 1000 * 60 * 60 * 24),
+			})
+			response.cookies.set({
+				name: 'accessToken',
+				value: json.accessToken,
+				path: '/',
+				expires: new Date(Date.now() + 1000 * 60 * 60),
+			})
+			response.cookies.set({
+				name: 'refreshToken',
+				value: json.refreshToken,
+				path: '/',
+				expires: new Date(Date.now() + 1000 * 60 * 60 * 24),
+			})
+			return response
+
+		})
+		: NextResponse.json({success: false, message: (await res.json()).message}, {status: 401})
+	})
+	.catch(async (err) => {
+		return NextResponse.json({success: false, message: err}, {status: 400})
+	})
    
-	return NextResponse.json(json);   
+	
+
   }
