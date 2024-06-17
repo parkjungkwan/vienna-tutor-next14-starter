@@ -10,23 +10,32 @@ export default function LogoutPage() {
 	const [isLoggedOut, setIsLoggedOut] = useState(false);
 	const { setUserData } = useApp();
 
-	useEffect(() => {
-		fetch('/api/logout', {
-			method: 'GET',
-		})
-			.then(res => {
-				if (res.ok) {
-					setIsLoggedOut(true);
-					setUserData(null);
+	const handleLogout = async () => {
+
+		try {
+			
+			
+
+			console.log(`Log out`)
+
+			console.log(`1 - App Routing GET`)
+			const response1 = await fetch('/api/logout', {
+				method: 'GET',
+				headers: {
+					'Content-Type': 'application/json',
 				}
-			})
-			.catch(() => {
-				console.error('Something went wrong!');
-			})
-			.finally(() => {
-				setIsLoading(false);
 			});
-	}, [setUserData]);
+
+
+		} catch (error) {
+			let mess = 'Something went wrong.';
+			if (error instanceof Error) {
+				mess = error.message;
+			}
+		} finally {
+			setIsLoading(false);
+		}
+	};
 
 	return (
 		<div className="flex flex-col items-center gap-6 m-auto w-full max-w-md">
@@ -37,7 +46,13 @@ export default function LogoutPage() {
 				</>
 			) : isLoggedOut ? (
 				<>
-					<h1 className="text-4xl font-bold">Logout</h1>
+					{/* <h1 className="text-4xl font-bold">Logout</h1> */}
+					<button
+						className="btn btn-primary"
+						onClick={handleLogout}
+					>
+						Logout
+					</button>
 					<p className="text-xl">
 						You have been logged out. You can <a href="/login">login</a> again.
 					</p>

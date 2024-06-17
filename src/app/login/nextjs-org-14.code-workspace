@@ -1,0 +1,11 @@
+{
+	"folders": [
+		{
+			"path": "../../.."
+		},
+		{
+			"path": "../../../../spring-flux-3"
+		}
+	],
+	"settings": {}
+}

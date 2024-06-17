@@ -45,7 +45,8 @@ export async function POST(request: NextRequest) {
 	.then(async (res)=>{
 		return res.ok ?
 		res.json().then((json)=>{
-			const response = NextResponse.json({ success: true, message: "SUCCESS" }, { status: 200 })
+			const response = NextResponse.json({ success: true, message: "SUCCESS" }, 
+				{ status: 200 })
 			console.log('------------------ response json ---------------')
 			console.log(JSON.stringify(json))
 			console.log('------------------ --------------- ---------------')
@@ -59,7 +60,7 @@ export async function POST(request: NextRequest) {
 				name: 'accessToken',
 				value: json.accessToken,
 				path: '/',
-				expires: new Date(Date.now() + 1000 * 60 * 60),
+				expires: new Date(Date.now() + 1000 * 60 * 60), 
 			})
 			response.cookies.set({
 				name: 'refreshToken',
