@@ -40,7 +40,7 @@ export async function POST(request: NextRequest) {
 		'Content-Type': 'application/json',
 	  },
 	  //body: JSON.stringify({ email, password }),
-	  body: JSON.stringify({ email: "tom@test.com", password: "1234" }),
+	  body: JSON.stringify({ username: "tom@test.com", password: "1234" }),
 	})
 	.then(async (res)=>{
 		return res.ok ?
